@@ -1,0 +1,501 @@
+   /* coffee floating button + slide panel */
+.coffee-widget {
+  position: fixed;
+  top: 18px;
+  right: 18px;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  pointer-events: none; /* контейнер сам не кликабелен, кликаются вложенные элементы */
+}
+
+/* само круглое кнопку-иконка */
+.coffee-btn {
+  pointer-events: auto;
+  width: 52px;
+  height: 52px;
+  border-radius: 12px;
+  background: rgba(20,20,20,0.88);
+  border: 1px solid rgba(255,255,255,0.04);
+  display: grid;
+  place-items: center;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.6);
+  cursor: pointer;
+  transition: transform .18s ease, box-shadow .18s ease;
+  backdrop-filter: blur(6px);
+}
+
+/* hover */
+.coffee-btn:hover {
+  transform: translateY(-4px) scale(1.03);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.75);
+}
+
+/* SVG lines color to match gray theme */
+.coffee-btn svg { width: 26px; height: 26px; display:block; }
+
+/* slide panel container (hidden by default) */
+.coffee-panel {
+  pointer-events: auto;
+  width: 260px;
+  max-width: calc(100vw - 90px);
+  background: linear-gradient(180deg, rgba(18,18,18,0.95), rgba(8,8,8,0.95));
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.04);
+  color: #e6e6e6;
+  padding: 12px 12px 12px 14px;
+  box-shadow: 0 18px 50px rgba(0,0,0,0.65);
+  transform: translateX(16px) translateY(0);
+  opacity: 0;
+  transition: transform .36s cubic-bezier(.2,.9,.2,1), opacity .28s ease;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+/* when open, panel shifts fully out from behind button */
+.coffee-widget.open .coffee-panel {
+  transform: translateX(-8px); /* выдвинутая позиция */
+  opacity: 1;
+}
+
+/* panel content */
+.coffee-panel .txt {
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  min-width: 0;
+}
+.coffee-panel .txt .title {
+  font-weight:700;
+  font-size:14px;
+  letter-spacing: .2px;
+  color: #f2f2f2;
+}
+.coffee-panel .txt .sub {
+  font-size:12px;
+  color: rgba(220,220,220,0.7);
+}
+
+/* action button inside panel */
+.coffee-panel .action {
+  margin-left:auto;
+  display:flex;
+  gap:8px;
+  align-items:center;
+}
+.coffee-panel .action a {
+  text-decoration:none;
+  background: rgba(255,255,255,0.06);
+  color: #eaeaea;
+  padding: 8px 10px;
+  border-radius: 8px;
+  font-weight:600;
+  font-size:13px;
+  border: 1px solid rgba(255,255,255,0.04);
+  transition: transform .12s ease, box-shadow .12s ease;
+}
+.coffee-panel .action a:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+}
+
+/* close icon */
+.coffee-panel .close {
+  margin-left: 8px;
+  background: transparent;
+  border: none;
+  color: rgba(220,220,220,0.7);
+  cursor: pointer;
+  font-size: 16px;
+}
+
+/* smaller screens adjustments */
+@media (max-width:520px){
+  .coffee-panel { width: 220px; padding:10px; }
+  .coffee-btn { width:48px; height:48px; border-radius:10px; }
+}
+
+/* ГЛАВНЫЙ ФОН */
+body {
+    background: #000;
+    overflow-x: hidden;
+}
+
+/* РАЗМЫТЫЕ ЦВЕТНЫЕ ПЯТНА */
+.bg-blur-layer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 120%;
+    height: 120%;
+    pointer-events: none;
+    z-index: -1;
+    filter: blur(90px);
+    opacity: 0.55;
+}
+
+/* Градиенты */
+.bg-blur-1 {
+    background: radial-gradient(circle at 20% 30%, #1a1a1a, transparent 60%);
+}
+
+.bg-blur-2 {
+    background: radial-gradient(circle at 80% 20%, rgba(0, 60, 255, 0.7), transparent 70%);
+}
+
+.bg-blur-3 {
+    background: radial-gradient(circle at 70% 70%, rgba(40, 40, 40, 0.8), transparent 75%);
+}
+/* ---------------- АНИМАЦИЯ ПОЯВЛЕНИЯ САЙТА ---------------- */
+/* Стартовое скрытие всей страницы */
+body {
+    opacity: 0;
+    transition: opacity .6s ease;
+}
+
+/* Когда страница загружена */
+body.loaded {
+    opacity: 1;
+}
+
+
+/* ===== ТУМАН ПОЗАДИ АВАТАРА ===== */
+.cyber-fog {
+  position: absolute;
+  inset: -80px;
+  z-index: -1;
+  background:
+    radial-gradient(circle at 40% 40%, rgba(255, 0, 150, 0.35), transparent 70%),
+    radial-gradient(circle at 70% 60%, rgba(130, 0, 255, 0.35), transparent 75%),
+    radial-gradient(circle at 30% 70%, rgba(0, 130, 255, 0.35), transparent 80%);
+  filter: blur(55px) brightness(1.35);
+  opacity: 1;
+  animation: fogPulse 7s ease-in-out infinite alternate;
+  mix-blend-mode: screen;
+}
+
+@keyframes fogPulse {
+  0%   { transform: scale(1) translateY(0); opacity: .8; }
+  50%  { transform: scale(1.18) translateY(-10px); opacity: .1; }
+  100% { transform: scale(1) translateY(0); opacity: .8; }
+}
+
+/* ===== НЕОНОВАЯ ГЛИТЧ-РАМКА ===== */
+.cyber-frame::before {
+  content: "";
+  position: absolute;
+  inset: -12px;        /* радиус сияния */
+  border-radius: 50%;
+  z-index: -1;
+
+  /* цвет НЕОНА (как у молний) */
+  background: radial-gradient(circle, 
+    rgba(80, 220, 255, 0.45) 0%, 
+    rgba(80, 220, 255, 0.18) 35%, 
+    rgba(80, 220, 255, 0) 70%
+  );
+
+  filter: blur(12px);
+  animation: neonGlow 3s ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* пульсирующее сияние */
+@keyframes neonGlow {
+  0%   { opacity: 0.35; transform: scale(1); }
+  50%  { opacity: 0.75; transform: scale(1.05); }
+  100% { opacity: 0.35; transform: scale(1); }
+}
+.cyber-frame {
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  padding: 6px;
+  background: linear-gradient(135deg,
+      #ff00ff, #7b00ff, #0044ff, #00eaff, #ff00cc);
+  filter: drop-shadow(0 0 10px #a200ff);
+  backdrop-filter: blur(4px);
+
+
+  box-shadow:
+      0 0 10px rgba(180,180,200,0.25),
+      0 0 20px rgba(140,140,160,0.15);
+  animation: framePulse 3s ease-in-out infinite,
+             lightningFlicker 1.8s infinite ease-in-out;
+          
+}
+/* ===== ПУЛЬС САМОЙ РАМКИ ===== */
+@keyframes framePulse {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.04); }
+  100% { transform: scale(1); }
+}
+
+/* лёгкое рандомное мерцание */
+@keyframes lightningFlicker {
+  0%, 100% { filter: brightness(1) blur(0); }
+  50% { filter: brightness(1.2) blur(0.5px); }
+}
+/* ===== ПУЛЬС АВАТАРА ===== */
+.avatar-pulse {
+  animation: none;
+}
+
+/* ---------------- НАВЫКИ: ИКОНКИ + TOOLTIP + ТЕРМИНАЛ ---------------- */
+
+/* контейнер навыка */
+.skill-item {
+    position: relative;
+    cursor: pointer;
+    transition: transform .25s ease;
+}
+
+.skill-item:hover {
+    transform: scale(1.08);
+}
+
+/* иконка */
+.skill-icon {
+    width: 46px;
+    height: 46px;
+    transition: .25s;
+}
+
+.skill-item:hover .skill-icon {
+    transform: translateY(-4px) scale(1.1);
+    filter: drop-shadow(0 0 8px cyan);
+}
+
+/* tooltip */
+.skill-tooltip {
+    position: absolute;
+    bottom: 115%;
+    left: 50%;
+    transform: translateX(-50%) scale(.8);
+    width: 210px;
+    padding: 12px;
+    background: rgba(10,10,20,0.9);
+    border: 1px solid rgba(0,255,255,0.25);
+    border-radius: 10px;
+    backdrop-filter: blur(6px);
+    opacity: 0;
+    pointer-events: none;
+    transition: .35s;
+}
+
+.skill-item:hover .skill-tooltip {
+    opacity: 1;
+    transform: translateX(-50%) scale(1);
+}
+
+/* терминальный текст */
+.term-text {
+    font-family: "Courier New", monospace;
+    white-space: nowrap;
+    overflow: hidden;
+    border-right: 2px solid cyan;
+    animation: typing 1.5s steps(28), caret .65s step-end infinite;
+    font-size: 13px;
+    color: #a9f8ff;
+}
+
+@keyframes typing {
+    from { width: 0 }
+    to { width: 100% }
+}
+
+@keyframes caret {
+    0%,100% { border-color: transparent }
+    50% { border-color: cyan }
+}
+
+  /* контейнер кнопки фиксированно у правого края, по центру экрана */
+  .coffee-fixed {
+    position: fixed;
+    right: calc(env(safe-area-inset-right, 0px) + 8px); /* рядом со скроллбаром и безопасной зоной */
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 99999;
+    pointer-events: none; /* контейнер не кликается, кликаются вложенные элементы */
+  }
+
+  /* кнопка */
+  .coffee-fixed .coffee-btn {
+    pointer-events: auto;
+    width: 56px;
+    height: 56px;
+    border-radius: 12px;
+    background: rgba(20,20,20,0.9);
+    border: 1px solid rgba(255,255,255,0.04);
+    display: grid;
+    place-items: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+    cursor: pointer;
+    transition: transform .16s ease, box-shadow .16s ease;
+    backdrop-filter: blur(6px);
+  }
+  .coffee-fixed .coffee-btn:hover { transform: translateY(-3px) scale(1.03); }
+
+  .coffee-fixed .coffee-btn svg { width:26px; height:26px; display:block; }
+
+  /* панель (выезжает влево от кнопки). По умолчанию скрыта */
+  .coffee-fixed .coffee-panel {
+    pointer-events: auto;
+    width: 300px;
+    max-width: calc(100vw - 120px);
+    background: linear-gradient(180deg, rgba(18,18,18,0.96), rgba(8,8,8,0.96));
+    color: #eaeaea;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.04);
+    padding: 12px;
+    box-shadow: 0 18px 50px rgba(0,0,0,0.65);
+    display:flex;
+    gap:12px;
+    align-items:center;
+
+    /* изначально скрыта: уехала вправо и прозрачна */
+    opacity: 0;
+    transform: translateX(12px) translateY(0);
+    transition: transform .36s cubic-bezier(.2,.9,.2,1), opacity .28s ease;
+  }
+
+  /* при открытом состоянии панель видна и выдвинута влево */
+  .coffee-fixed.open .coffee-panel {
+    opacity: 1;
+    transform: translateX(-16px);
+  }
+
+  /* текст внутри панели */
+  .coffee-fixed .txt { display:flex; flex-direction:column; gap:6px; min-width:0; }
+  .coffee-fixed .txt .title { font-weight:700; font-size:14px; color:#f2f2f2; }
+  .coffee-fixed .txt .sub   { font-size:12px; color:rgba(220,220,220,0.7); }
+
+  .coffee-fixed .action { margin-left:auto; display:flex; gap:8px; align-items:center; }
+  .coffee-fixed .action a {
+    text-decoration:none;
+    background: rgba(255,255,255,0.06);
+    color: #eaeaea;
+    padding: 8px 10px;
+    border-radius: 8px;
+    font-weight:600;
+    font-size:13px;
+    border: 1px solid rgba(255,255,255,0.04);
+    transition: transform .12s ease, box-shadow .12s ease;
+  }
+  .coffee-fixed .action a:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(0,0,0,0.6); }
+
+  .coffee-fixed .close { background:transparent; border:none; color:rgba(220,220,220,0.7); cursor:pointer; font-size:16px; }
+
+  /* небольшая адаптация: на узких экранах скрываем виджет (можешь изменить) */
+  @media (max-width: 640px) {
+    .coffee-fixed { display: none; }
+  }
+
+  /* уменьшенный вариант для компактности */
+  @media (min-width: 1200px) {
+    .coffee-fixed .coffee-panel { width: 320px; }
+    .coffee-fixed .coffee-btn { width: 60px; height: 60px; border-radius: 14px; }
+  }
+
+  /* reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    .coffee-fixed .coffee-panel,
+    .coffee-fixed .coffee-btn { transition: none !important; animation: none !important; }
+  }
+
+/* --------- КНОПКА --------- */
+
+.coffee-btn {
+  position: fixed;
+  top: 20px;
+  right: 8px;
+  z-index: 9999;
+
+  display: flex;
+  align-items: center;
+  
+  gap: 16px;
+
+  background: rgba(255,255,255,0.05);
+  backdrop-filter: blur(6px);
+  padding: 6px 12px;
+  border-radius: 12px;
+
+  width: 42px;
+  overflow: hidden;
+  transition: width 0.35s ease, background 0.35s ease;
+  color: #fff;
+  text-decoration: none;
+  font-size: 15px;
+}
+
+.coffee-btn:hover {
+  width: 170px;
+  background: rgba(255,255,255,0.12);
+}
+
+.coffee-text {
+  opacity: 0;
+  white-space: nowrap;
+  transition: opacity .35s ease;
+}
+
+.coffee-btn:hover .coffee-text {
+  opacity: 1;
+}
+
+/* --------- ИКОНКА КОФЕ ИЗ ЛИНИЙ --------- */
+
+.coffee-icon {
+  position: relative;
+  width: 22px;
+  height: 20px;
+}
+
+/* Чашка */
+.cup {
+  position: absolute;
+  bottom: 0;
+  width: 18px;
+  height: 12px;
+  border: 2px solid white;
+  border-radius: 0 0 6px 6px;
+}
+
+/* Ручка */
+.cup::after {
+  content: "";
+  position: absolute;
+  right: -7px;
+  top: 2px;
+  width: 8px;
+  height: 8px;
+  border: 2px solid white;
+  border-left: none;
+  border-radius: 0 6px 6px 0;
+}
+
+/* Пар */
+.steam {
+  position: absolute;
+  top: -10px;
+  width: 5px;
+  height: 10px;
+  border-left: 2px solid white;
+  border-right: 2px solid white;
+  border-radius: 10px;
+  opacity: 0.9;
+  animation: steamMove 2s ease-in-out infinite;
+}
+
+.steam1 { left: 4px; animation-delay: 0s; }
+.steam2 { left: 10px; animation-delay: .4s; }
+
+/* Анимация пара */
+@keyframes steamMove {
+  0% { transform: translateY(4px) scale(0.9); opacity: 0.2; }
+  50% { transform: translateY(-2px) scale(1); opacity: 1; }
+  100% { transform: translateY(4px) scale(0.9); opacity: 0.2; }
+}
